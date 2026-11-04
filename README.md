@@ -76,13 +76,15 @@ All endpoints except register/login need `Authorization: Bearer <access token>`.
   convert the response to a blob, and use `URL.createObjectURL(blob)`.
 - Access tokens last 60 minutes; use `/api/auth/refresh/` to renew them.
 
-## Deployment (Render / Railway)
+## Deployment (PythonAnywhere)
 
-- Build: `pip install -r requirements.txt && python manage.py collectstatic --noinput`
-- Start: `python manage.py migrate --noinput && gunicorn config.wsgi`
-- Set the environment variables above, with `DEBUG=False`.
-- Container disks are ephemeral. Mount a persistent volume and set `MEDIA_ROOT`, or move
-  uploads to private object storage (S3/R2) with `django-storages`.
+1. Clone the repo in a Bash console, create a virtualenv, `pip install -r requirements.txt`.
+2. Create `.env` next to `manage.py` with the variables above (`DEBUG=False`).
+3. `python manage.py migrate && python manage.py collectstatic --noinput && python manage.py createsuperuser`
+4. Web tab: Manual configuration, set the virtualenv and source folder, point the WSGI file at
+   `config.settings`, map `/static/` to `staticfiles/`, enable Force HTTPS, then Reload.
+5. Do not map `/media/`. Images are served only through the authenticated image endpoint.
+6. SQLite is used by default. For Postgres/MySQL, set `DATABASE_URL`.
 
 ## Known limitations (prototype)
 
